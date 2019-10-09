@@ -31,3 +31,9 @@ func TestRadixSort(t *testing.T) {
 	RadixSort(arr,1)
 	t.Log(arr)
 }
+
+func TestBucketSort(t *testing.T) {
+	arr := []int{2,1,5,8,3,6,9}
+	res := BucketSort(arr)
+	t.Log(res)
+}
