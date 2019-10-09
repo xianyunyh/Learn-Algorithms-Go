@@ -37,3 +37,9 @@ func TestBucketSort(t *testing.T) {
 	res := BucketSort(arr)
 	t.Log(res)
 }
+
+func TestShellSort(t *testing.T) {
+	arr := []int{2,1,5,8,3,6,9}
+	ShellSort(arr)
+	t.Log(arr)
+}
