@@ -1,4 +1,4 @@
-module github.com/xianyunyh/Learn-Algorithms/Go_codes
+module github.com/xianyunyh/Learn-Algorithms-Go
 
 go 1.12
 

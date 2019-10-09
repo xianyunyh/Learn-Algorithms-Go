@@ -26,3 +26,8 @@ func TestInsertSort(t *testing.T) {
 	a := assert.New(t)
 	a.Equal(arr,[]int{1,2,3,5,6,8,9})
 }
+func TestRadixSort(t *testing.T) {
+	arr := []int{2,1,5,8,3,6,9}
+	RadixSort(arr,1)
+	t.Log(arr)
+}

@@ -1,7 +1,7 @@
 package questions
 
 import (
-	"github.com/xianyunyh/Learn-Algorithms/Go_codes/dataStruct"
+	"github.com/xianyunyh/Learn-Algorithms-Go/dataStruct"
 )
 
 //输入一个单链表，输出链表的倒数第K个节点

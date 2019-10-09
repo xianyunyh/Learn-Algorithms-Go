@@ -2,8 +2,8 @@ package questions
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/xianyunyh/Learn-Algorithms/Go_codes/dataStruct"
 	"testing"
+	"github.com/xianyunyh/Learn-Algorithms-Go/dataStruct"
 )
 
 func TestFindReserveKNode(t *testing.T) {
