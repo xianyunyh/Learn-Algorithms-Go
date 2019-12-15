@@ -1,80 +1,174 @@
 package dataStruct
 
 type PHPHashTable struct {
-	TableMask uint64
-	NumUsed uint32
+	TableMask   uint64
+	NumUsed     uint32
 	NumElements uint32
-	TableSize uint32
-	ArData *Buckets
+	TableSize   uint32
+	ArData      *Buckets
 }
-
+//
+type PHPBucket struct {
+	data interface{}
+	hashKey string
+	next *PHPBucket
+	flag uint8 // flag=1 被删除
+}
 type Buckets struct {
 	Index []int
-	Items []*Bucket
+	Items []*PHPBucket
 }
 
-func NewPHPHashTable() *PHPHashTable  {
-	idx := make([]int,8)
-	items := make([]*Bucket,8)
-	for i := 0;i < 8;i++  {
-		idx = append(idx,-1)
+// 一个空表
+func NewPHPHashTable() *PHPHashTable {
+	idx := make([]int, 8)
+	items := make([]*PHPBucket, 8)
+	for i := 0; i < 8; i++ {
+		idx[i] = -1
 	}
-	return  &PHPHashTable{
+	return &PHPHashTable{
 		TableMask:   0,
-		NumUsed:     0,//使用的个数 包含被删除的
-		NumElements: 0,//真实的个数
-		TableSize:   0,//总数
-		ArData:     &Buckets{
+		NumUsed:     0, //使用的个数 包含被删除的
+		NumElements: 0, //真实的个数
+		TableSize:   8, //总数
+		ArData: &Buckets{
 			Index: idx,
 			Items: items,
 		},
 	}
 }
 
-func (self *PHPHashTable)Insert(key string,value interface{})  {
-	idx := Time33(key) % self.TableMask
-	//冲突
-	bucket := &Bucket{
+//Insert 插入元素
+func (h *PHPHashTable) Insert(key string, value interface{}) {
+
+	//检查容量
+	if h.NumUsed >= h.TableSize {
+		h.Resize()
+	}
+
+	idx := h.HashCode(key)
+
+	bucket := &PHPBucket{
 		data:    value.(string),
 		hashKey: key,
+		next: nil,
 	}
-	if self.ArData.Index[idx] != -1 {
-		arrIdx := self.ArData.Index[idx]
-		bucket.next = self.ArData.Items[arrIdx]
-		self.ArData.Index[idx] = int(self.NumUsed)
-		self.ArData.Items[idx] = bucket
+	//冲突
+	if h.ArData.Index[idx] != -1 {
+		arrIdx := h.ArData.Index[idx]
+		bucket.next = h.ArData.Items[arrIdx]
+		h.ArData.Index[idx] = int(h.NumUsed)
+		h.ArData.Items[idx] = bucket
 	} else {
-		self.ArData.Index[idx] = int(self.NumUsed)
-		self.ArData.Items[self.NumUsed] = bucket
+		h.ArData.Index[idx] = int(h.NumUsed)
+		h.ArData.Items[h.NumUsed] = bucket
 	}
-	self.NumUsed++
-	self.NumElements++
-	self.TableSize++
+	h.NumUsed++
+	h.NumElements++
 }
-func (self *PHPHashTable)Find(key string) interface{}  {
-	idx := Time33(key) % self.TableMask
-	itemIdx := self.ArData.Index[idx]
+//调整容量
+func (h *PHPHashTable) Resize() {
+
+	if h.NumUsed > h.NumElements+(h.NumElements>>5) {
+		//删除里面已删除的元素，调整hash值
+		for i := 0;i < int(h.TableSize);i++ {
+			if h.ArData.Items[i].flag == 1 || h.ArData.Items[i] == nil {
+				if int(h.TableSize) == i+1 {
+					h.ArData.Items[i] = nil
+					break
+				}
+				h.ArData.Items[i] = h.ArData.Items[i+1]
+				h.ArData.Items[i+1] = nil
+			}
+		}
+		h.Rehash()
+		return
+	}
+	//扩容
+	h.TableSize = h.TableSize * 2 //扩容两倍
+	h.TableMask = uint64(h.TableSize)
+	items := make([]*PHPBucket, h.TableSize)
+	items = append(items, h.ArData.Items[:]...)
+	h.ArData.Index = make([]int, h.TableSize)
+	h.ArData.Items = items
+	//rehash 重建索引
+	h.Rehash()
+
+}
+
+//再哈稀
+func (h *PHPHashTable)Rehash()  {
+
+	//重置索引
+	for i := range h.ArData.Index {
+		h.ArData.Index[i] = -1
+	}
+	//遍历数组，重建索引
+	for i,v := range h.ArData.Items {
+		t := h.HashCode(v.hashKey)
+
+		h.ArData.Index[t] = i
+		h.ArData.Items[i].next = nil
+		//冲突
+		if h.ArData.Index[t] != -1 {
+			idx := h.ArData.Index[t]
+			h.ArData.Items[i].next = h.ArData.Items[idx]
+		}
+
+	}
+}
+// 计算索引
+func (h *PHPHashTable)HashCode(key string) uint64  {
+	return Time33(key) % h.TableMask
+}
+//查找
+func (h *PHPHashTable) Find(key string) interface{} {
+	idx := h.HashCode(key)
+	itemIdx := h.ArData.Index[idx]
 	//没找到
 	if itemIdx == -1 {
 		return nil
 	}
 	//遍历链表
-	item := self.ArData.Items[itemIdx]
+	item := h.ArData.Items[itemIdx]
 	for item.next != nil {
 		if item.hashKey == key {
 			return item.data
 		}
 		item = item.next
 	}
-	return  nil
+	return nil
+}
+
+// 删除的逻辑 就是设置flag 伪删除
+func (h *PHPHashTable)Delete(key string) bool  {
+	hashNum := h.HashCode(key)
+	if h.ArData.Index[hashNum] == -1 {
+		return false
+	}
+	idx := h.ArData.Index[hashNum]
+	item := h.ArData.Items[idx]
+	for item.next != nil {
+		if item.hashKey == key {
+			item.flag = 1
+			return true
+		}
+		item = item.next
+	}
+	return false
+}
+
+//Count
+func (h *PHPHashTable)Count() int  {
+	return int(h.NumElements)
 }
 
 //time 33 算法
-func Time33(str string) uint64  {
-	var  hashMask uint64  = 5381
-	for _,s := range str {
+func Time33(str string) uint64 {
+	var hashMask uint64 = 5381
+	for _, s := range str {
 		c := uint64(s)
-		hashMask += ( c >> 5) + c // *33 = h×32+ h
+		hashMask += (c >> 5) + c // *33 = h×32+ h
 	}
 	return hashMask & 0x7FFFFFFF
 }
