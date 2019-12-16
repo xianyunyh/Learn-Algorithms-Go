@@ -27,7 +27,7 @@ func NewPHPHashTable() *PHPHashTable {
 		idx[i] = -1
 	}
 	return &PHPHashTable{
-		TableMask:   0,
+		TableMask:   8,
 		NumUsed:     0, //使用的个数 包含被删除的
 		NumElements: 0, //真实的个数
 		TableSize:   8, //总数
@@ -58,7 +58,7 @@ func (h *PHPHashTable) Insert(key string, value interface{}) {
 		arrIdx := h.ArData.Index[idx]
 		bucket.next = h.ArData.Items[arrIdx]
 		h.ArData.Index[idx] = int(h.NumUsed)
-		h.ArData.Items[idx] = bucket
+		h.ArData.Items[h.NumUsed] = bucket
 	} else {
 		h.ArData.Index[idx] = int(h.NumUsed)
 		h.ArData.Items[h.NumUsed] = bucket
@@ -88,7 +88,8 @@ func (h *PHPHashTable) Resize() {
 	h.TableSize = h.TableSize * 2 //扩容两倍
 	h.TableMask = uint64(h.TableSize)
 	items := make([]*PHPBucket, h.TableSize)
-	items = append(items, h.ArData.Items[:]...)
+	copy(items,h.ArData.Items)
+	//items = append(items, h.ArData.Items[:]...)
 	h.ArData.Index = make([]int, h.TableSize)
 	h.ArData.Items = items
 	//rehash 重建索引
@@ -105,21 +106,26 @@ func (h *PHPHashTable)Rehash()  {
 	}
 	//遍历数组，重建索引
 	for i,v := range h.ArData.Items {
+		if v == nil {
+			continue
+		}
 		t := h.HashCode(v.hashKey)
 
-		h.ArData.Index[t] = i
-		h.ArData.Items[i].next = nil
+
 		//冲突
 		if h.ArData.Index[t] != -1 {
 			idx := h.ArData.Index[t]
 			h.ArData.Items[i].next = h.ArData.Items[idx]
+		}else {
+			h.ArData.Index[t] = i
+			h.ArData.Items[i].next = nil
 		}
 
 	}
 }
 // 计算索引
 func (h *PHPHashTable)HashCode(key string) uint64  {
-	return Time33(key) % h.TableMask
+	return Time33(key) % (h.TableMask -1)
 }
 //查找
 func (h *PHPHashTable) Find(key string) interface{} {
@@ -131,11 +137,17 @@ func (h *PHPHashTable) Find(key string) interface{} {
 	}
 	//遍历链表
 	item := h.ArData.Items[itemIdx]
+	if item.hashKey == key && item.flag != 1 {
+		return item.data
+	}
 	for item.next != nil {
-		if item.hashKey == key {
-			return item.data
+		if item.hashKey == key{
+			break
 		}
 		item = item.next
+	}
+	if item.flag != 1 {
+		return item.data
 	}
 	return nil
 }
@@ -148,9 +160,15 @@ func (h *PHPHashTable)Delete(key string) bool  {
 	}
 	idx := h.ArData.Index[hashNum]
 	item := h.ArData.Items[idx]
+	if item.hashKey == key {
+		item.flag = 1
+		h.NumElements--
+		return true
+	}
 	for item.next != nil {
 		if item.hashKey == key {
 			item.flag = 1
+			h.NumElements--
 			return true
 		}
 		item = item.next
@@ -171,4 +189,15 @@ func Time33(str string) uint64 {
 		hashMask += (c >> 5) + c // *33 = h×32+ h
 	}
 	return hashMask & 0x7FFFFFFF
+}
+
+func (h *PHPHashTable)Foreach(fn func(i int,val interface{}))  {
+	index := 0
+	for _,v := range h.ArData.Items {
+		if v== nil || v.flag != 0 {
+			continue
+		}
+		fn(index,v.data)
+		index++
+	}
 }
