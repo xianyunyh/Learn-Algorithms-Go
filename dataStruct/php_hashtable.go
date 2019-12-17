@@ -1,5 +1,9 @@
 package dataStruct
 
+const (
+	DELETE = 1
+)
+
 type PHPHashTable struct {
 	TableMask   uint64
 	NumUsed     uint32
@@ -58,12 +62,9 @@ func (h *PHPHashTable) Insert(key string, value interface{}) {
 	if h.ArData.Index[idx] != -1 {
 		arrIdx := h.ArData.Index[idx]
 		bucket.next = h.ArData.Items[arrIdx]
-		h.ArData.Index[idx] = int(h.NumUsed)
-		h.ArData.Items[h.NumUsed] = bucket
-	} else {
-		h.ArData.Index[idx] = int(h.NumUsed)
-		h.ArData.Items[h.NumUsed] = bucket
 	}
+	h.ArData.Index[idx] = int(h.NumUsed)
+	h.ArData.Items[h.NumUsed] = bucket
 	h.NumUsed++
 	h.NumElements++
 }
@@ -74,7 +75,7 @@ func (h *PHPHashTable) Resize() {
 	if h.NumUsed > h.NumElements+(h.NumElements>>5) {
 		//删除里面已删除的元素，调整hash值
 		for i := 0; i < int(h.TableSize); i++ {
-			if h.ArData.Items[i].flag == 1 || h.ArData.Items[i] == nil {
+			if h.ArData.Items[i].flag == DELETE || h.ArData.Items[i] == nil {
 				if int(h.TableSize) == i+1 {
 					h.ArData.Items[i] = nil
 					break
@@ -114,14 +115,12 @@ func (h *PHPHashTable) Rehash() {
 		t := h.HashCode(v.hashKey)
 
 		//冲突
+		h.ArData.Items[i].next = nil
 		if h.ArData.Index[t] != -1 {
 			idx := h.ArData.Index[t]
 			h.ArData.Items[i].next = h.ArData.Items[idx]
-		} else {
-			h.ArData.Index[t] = i
-			h.ArData.Items[i].next = nil
 		}
-
+		h.ArData.Index[t] = i
 	}
 }
 
@@ -146,7 +145,7 @@ func (h *PHPHashTable) Find(key string) interface{} {
 		}
 		item = item.next
 	}
-	if item.flag != 1 {
+	if item != nil && item.flag != DELETE {
 		return item.data
 	}
 	return nil
@@ -181,18 +180,16 @@ func Time33(str string) uint64 {
 	var hashMask uint64 = 5381
 	for _, s := range str {
 		c := uint64(s)
-		hashMask += (c >> 5) + c // *33 = h×32+ h
+		hashMask += (c << 5) + c // *33 = h×32+ h
 	}
 	return hashMask & 0x7FFFFFFF
 }
 
-func (h *PHPHashTable) Foreach(fn func(i int, val interface{})) {
-	index := 0
+func (h *PHPHashTable) Foreach(fn func(key string, val interface{})) {
 	for _, v := range h.ArData.Items {
-		if v == nil || v.flag != 0 {
+		if v == nil || v.flag == DELETE {
 			continue
 		}
-		fn(index, v.data)
-		index++
+		fn(v.hashKey, v.data)
 	}
 }
