@@ -5,11 +5,11 @@ const (
 )
 
 type PHPHashTable struct {
-	TableMask   uint64
-	NumUsed     uint32
-	NumElements uint32
-	TableSize   uint32
-	ArData      *Buckets
+	tableMask   uint64
+	numUsed     uint32
+	numElements uint32
+	tableSize   uint32
+	arData      *Buckets
 }
 
 //
@@ -20,8 +20,8 @@ type PHPBucket struct {
 	flag    uint8 // flag=1 被删除
 }
 type Buckets struct {
-	Index []int
-	Items []*PHPBucket
+	indexs []int
+	items  []*PHPBucket
 }
 
 // 一个空表
@@ -31,14 +31,15 @@ func NewPHPHashTable() *PHPHashTable {
 	for i := 0; i < 8; i++ {
 		idx[i] = -1
 	}
+	//初始值为8 扩容是8*n
 	return &PHPHashTable{
-		TableMask:   8,
-		NumUsed:     0, //使用的个数 包含被删除的
-		NumElements: 0, //真实的个数
-		TableSize:   8, //总数
-		ArData: &Buckets{
-			Index: idx,
-			Items: items,
+		tableMask:   8,
+		numUsed:     0, //使用的个数 包含被删除的
+		numElements: 0, //真实的个数
+		tableSize:   8, //总数
+		arData: &Buckets{
+			indexs: idx,
+			items:  items,
 		},
 	}
 }
@@ -47,8 +48,21 @@ func NewPHPHashTable() *PHPHashTable {
 func (h *PHPHashTable) Insert(key string, value interface{}) {
 
 	//检查容量
-	if h.NumUsed >= h.TableSize {
-		h.Resize()
+	if h.numUsed >= h.tableSize {
+		h.reSize()
+		h.rehash()
+	}
+	pos := h.findPos(key)
+	if pos != -1 {
+		item := h.arData.items[pos]
+		for item != nil {
+			if item.hashKey == key {
+				item.data = value
+				item.flag = 0
+			}
+			item = item.next
+		}
+		return
 	}
 
 	idx := h.HashCode(key)
@@ -59,86 +73,105 @@ func (h *PHPHashTable) Insert(key string, value interface{}) {
 		next:    nil,
 	}
 	//冲突
-	if h.ArData.Index[idx] != -1 {
-		arrIdx := h.ArData.Index[idx]
-		bucket.next = h.ArData.Items[arrIdx]
+	if h.arData.indexs[idx] != -1 {
+		arrIdx := h.arData.indexs[idx]
+		bucket.next = h.arData.items[arrIdx]
 	}
-	h.ArData.Index[idx] = int(h.NumUsed)
-	h.ArData.Items[h.NumUsed] = bucket
-	h.NumUsed++
-	h.NumElements++
+	h.arData.indexs[idx] = int(h.numUsed)
+	h.arData.items[h.numUsed] = bucket
+	h.numUsed++
+	h.numElements++
 }
 
 //调整容量
-func (h *PHPHashTable) Resize() {
+func (h *PHPHashTable) reSize() {
 
-	if h.NumUsed > h.NumElements+(h.NumElements>>5) {
+	if h.numUsed > h.numElements+(h.numElements>>5) {
 		//删除里面已删除的元素，调整hash值
-		for i := 0; i < int(h.TableSize); i++ {
-			if h.ArData.Items[i].flag == DELETE || h.ArData.Items[i] == nil {
-				if int(h.TableSize) == i+1 {
-					h.ArData.Items[i] = nil
+		for i := 0; i < int(h.tableSize); i++ {
+			if h.arData.items[i].flag == DELETE || h.arData.items[i] == nil {
+				if int(h.tableSize) == i+1 {
+					h.arData.items[i] = nil
 					break
 				}
-				h.ArData.Items[i] = h.ArData.Items[i+1]
-				h.ArData.Items[i+1] = nil
+				h.arData.items[i] = h.arData.items[i+1]
+				h.arData.items[i+1] = nil
 			}
 		}
-		h.Rehash()
 		return
 	}
 	//扩容
-	h.TableSize = h.TableSize * 2 //扩容两倍
-	h.TableMask = uint64(h.TableSize)
-	items := make([]*PHPBucket, h.TableSize)
-	copy(items, h.ArData.Items)
-	//items = append(items, h.ArData.Items[:]...)
-	h.ArData.Index = make([]int, h.TableSize)
-	h.ArData.Items = items
-	//rehash 重建索引
-	h.Rehash()
-
+	h.tableSize = h.tableSize * 2 //扩容两倍
+	h.tableMask = uint64(h.tableSize)
+	items := make([]*PHPBucket, h.tableSize)
+	copy(items, h.arData.items)
+	//items = append(items, h.arData.items[:]...)
+	h.arData.indexs = make([]int, h.tableSize)
+	h.arData.items = items
 }
 
 //再哈稀
-func (h *PHPHashTable) Rehash() {
+func (h *PHPHashTable) rehash() {
 
 	//重置索引
-	for i := range h.ArData.Index {
-		h.ArData.Index[i] = -1
+	for i := range h.arData.indexs {
+		h.arData.indexs[i] = -1
 	}
 	//遍历数组，重建索引
-	for i, v := range h.ArData.Items {
+	for i, v := range h.arData.items {
 		if v == nil {
 			continue
 		}
 		t := h.HashCode(v.hashKey)
 
 		//冲突
-		h.ArData.Items[i].next = nil
-		if h.ArData.Index[t] != -1 {
-			idx := h.ArData.Index[t]
-			h.ArData.Items[i].next = h.ArData.Items[idx]
+		h.arData.items[i].next = nil
+		if h.arData.indexs[t] != -1 {
+			idx := h.arData.indexs[t]
+			h.arData.items[i].next = h.arData.items[idx]
 		}
-		h.ArData.Index[t] = i
+		h.arData.indexs[t] = i
 	}
 }
 
 // 计算索引
 func (h *PHPHashTable) HashCode(key string) uint64 {
-	return Time33(key) % (h.TableMask - 1)
+	return Time33(key) % (h.tableMask - 1)
+}
+
+func (h *PHPHashTable) findPos(key string) int {
+	idx := h.HashCode(key)
+	itemIdx := h.arData.indexs[idx]
+	pos := -1
+	//没找到
+	if itemIdx == -1 {
+		return pos
+	}
+	//遍历链表
+	item := h.arData.items[itemIdx]
+	for item != nil {
+		if item.hashKey == key {
+			break
+		}
+		item = item.next
+	}
+	if item != nil {
+		return itemIdx
+	}
+	pos = -1
+	return pos
 }
 
 //查找
 func (h *PHPHashTable) Find(key string) interface{} {
 	idx := h.HashCode(key)
-	itemIdx := h.ArData.Index[idx]
+	pos := h.arData.indexs[idx]
 	//没找到
-	if itemIdx == -1 {
+	if pos == -1 {
 		return nil
 	}
 	//遍历链表
-	item := h.ArData.Items[itemIdx]
+	item := h.arData.items[pos]
 	for item != nil {
 		if item.hashKey == key {
 			break
@@ -154,15 +187,15 @@ func (h *PHPHashTable) Find(key string) interface{} {
 // 删除的逻辑 就是设置flag 伪删除
 func (h *PHPHashTable) Delete(key string) bool {
 	hashNum := h.HashCode(key)
-	if h.ArData.Index[hashNum] == -1 {
+	if h.arData.indexs[hashNum] == -1 {
 		return false
 	}
-	idx := h.ArData.Index[hashNum]
-	item := h.ArData.Items[idx]
+	pos := h.arData.indexs[hashNum]
+	item := h.arData.items[pos]
 	for item != nil {
 		if item.hashKey == key {
 			item.flag = 1
-			h.NumElements--
+			h.numElements--
 			return true
 		}
 		item = item.next
@@ -172,7 +205,7 @@ func (h *PHPHashTable) Delete(key string) bool {
 
 //Count
 func (h *PHPHashTable) Count() int {
-	return int(h.NumElements)
+	return int(h.numElements)
 }
 
 //time 33 算法
@@ -186,7 +219,7 @@ func Time33(str string) uint64 {
 }
 
 func (h *PHPHashTable) Foreach(fn func(key string, val interface{})) {
-	for _, v := range h.ArData.Items {
+	for _, v := range h.arData.items {
 		if v == nil || v.flag == DELETE {
 			continue
 		}
