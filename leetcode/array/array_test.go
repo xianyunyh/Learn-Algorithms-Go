@@ -56,3 +56,10 @@ func TestPlusOne(t *testing.T) {
 	a.Equal(PlusOne([]int{9, 9, 9, 9}), []int{1, 0, 0, 0, 0})
 
 }
+
+func TestMoveZero(t *testing.T) {
+	nums1 := []int{0, 4, 0, 8, 4}
+	a := assert.New(t)
+	moveZero(nums1)
+	a.Equal(nums1, []int{4, 8, 4, 0, 0})
+}
