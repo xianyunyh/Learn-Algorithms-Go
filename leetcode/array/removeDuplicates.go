@@ -6,7 +6,20 @@ import "sort"
 //
 //不要使用额外的数组空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。
 
+//利用快慢指针的方法
+//
 func removeDuplicates(nums []int) int {
+	slow := 0
+	for fast := 1; fast < len(nums); fast++ {
+		if nums[fast] != nums[slow] {
+			nums[slow+1] = nums[fast]
+			slow++
+		}
+	}
+	return slow + 1
+}
+
+func removeDuplicates2(nums []int) int {
 	tempMap := make(map[int]int, len(nums))
 	for k, v := range nums {
 		//已经存在
