@@ -1,6 +1,7 @@
 package array
 
 import (
+	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -62,4 +63,14 @@ func TestMoveZero(t *testing.T) {
 	a := assert.New(t)
 	moveZero(nums1)
 	a.Equal(nums1, []int{4, 8, 4, 0, 0})
+}
+
+func TestIsPalindrome(t *testing.T) {
+	a := assert.New(t)
+	r := isPalindrome(10)
+	a.Equal(r, false)
+	a.Equal(isPalindrome(1001), true)
+	a.Equal(isPalindrome(1), true)
+	a.Equal(isPalindrome(-10), false)
+	log.Println(r)
 }

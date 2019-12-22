@@ -1,8 +1,7 @@
 package array
 
-//计算两个数组之间的交集
+// Intersect 计算两个数组之间的交集
 //利用hash表
-
 func Intersect(a, b []int) []int {
 	result := []int{}
 	mapA := make(map[int]int)
@@ -10,14 +9,14 @@ func Intersect(a, b []int) []int {
 
 	for _, v := range a {
 		if _, ok := mapA[v]; ok {
-			mapA[v] += 1
+			mapA[v]++
 		} else {
-			mapA[v] += 1
+			mapA[v] = 1
 		}
 	}
 	for _, v := range b {
 		if _, ok := mapB[v]; ok {
-			mapB[v] += 1
+			mapB[v]++
 		} else {
 			mapB[v] = 1
 		}
