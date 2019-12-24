@@ -13,4 +13,6 @@ func TestLongestCommonPrefix(t *testing.T) {
 	i := strStr("mississippi", "issip")
 	log.Println(i)
 	log.Println(strings.Index("mississippi", "issip"))
+
+	log.Println(lengthOfLastWord("a "))
 }
