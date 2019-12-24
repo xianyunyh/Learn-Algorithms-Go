@@ -12,3 +12,6 @@ func TestAddTwoNumbers(t *testing.T) {
 	l2 := &ListNode{Val: 0}
 	addTwoNumbers(l1, l2)
 }
+func TestDeleteDuplicates(t *testing.T) {
+	// a := assert.New(t)
+}

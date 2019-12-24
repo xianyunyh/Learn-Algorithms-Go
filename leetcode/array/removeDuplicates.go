@@ -29,7 +29,7 @@ func removeDuplicates2(nums []int) int {
 		tempMap[v] = k
 	}
 	keys := []int{}
-	for k, _ := range tempMap {
+	for k := range tempMap {
 		keys = append(keys, k)
 	}
 	sort.Ints(keys)
