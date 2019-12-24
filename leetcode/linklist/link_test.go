@@ -25,4 +25,8 @@ func TestMergeTwoLists(t *testing.T) {
 	l2.Next = &ListNode{Val: 3}
 	l2.Next.Next = &ListNode{Val: 4}
 	a.Equal(mergeTwoLists(l1, l2).Next.Val, 1)
+	l3 := &ListNode{Val:1}
+	l3.Next = &ListNode{Val:0}
+	l3.Next.Next = &ListNode{Val:1}
+	getDecimalValue(l3)
 }
