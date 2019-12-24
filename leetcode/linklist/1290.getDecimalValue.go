@@ -3,6 +3,16 @@ package linklist
 import "math"
 
 func getDecimalValue(head *ListNode) int {
+	node := head
+	sum := 0
+	for node != nil {
+		sum = sum*2 + node.Val
+		node = node.Next
+	}
+	return sum
+}
+
+func getDecimalValue2(head *ListNode) int {
 
 	node := head
 	i := 0
