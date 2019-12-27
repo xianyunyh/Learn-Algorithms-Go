@@ -45,9 +45,13 @@ func TestIsValidSudoku(t *testing.T) {
 	a.Equal(isValidSudoku(bytes2), false)
 }
 
-func TestUniqueOccurrences(t *testing.T)  {
+func TestUniqueOccurrences(t *testing.T) {
 	a := assert.New(t)
-	a.Equal(uniqueOccurrences([]int{1,2,2,1,1,3}),true)
-	a.Equal(uniqueOccurrences([]int{1,2}),false)
-	a.Equal(uniqueOccurrences([]int{-3,0,1,-3,1,1,1,-3,10,0}),true)
+	a.Equal(uniqueOccurrences([]int{1, 2, 2, 1, 1, 3}), true)
+	a.Equal(uniqueOccurrences([]int{1, 2}), false)
+	a.Equal(uniqueOccurrences([]int{-3, 0, 1, -3, 1, 1, 1, -3, 10, 0}), true)
+}
+
+func TestLengthOfLongestSubstring(t *testing.T) {
+	lengthOfLongestSubstring("abcabcd")
 }
