@@ -30,4 +30,10 @@ func TestMergeTwoLists(t *testing.T) {
 	l3.Next.Next = &ListNode{Val: 1}
 	getDecimalValue(l3)
 	hasCycle(l3)
+	l4 := &ListNode{Val: 1}
+	l4.Next = &ListNode{Val: 2}
+	l4.Next.Next = &ListNode{Val: 3}
+	l4.Next.Next.Next = &ListNode{Val: 4}
+	l4.Next.Next.Next.Next = &ListNode{Val: 5}
+	removeNthFromEnd(l4, 2)
 }
