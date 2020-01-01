@@ -15,4 +15,5 @@ func TestLongestCommonPrefix(t *testing.T) {
 	log.Println(strings.Index("mississippi", "issip"))
 
 	log.Println(lengthOfLastWord("a "))
+	detectCapitalUse("FlaG")
 }
