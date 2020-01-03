@@ -55,3 +55,7 @@ func TestUniqueOccurrences(t *testing.T) {
 func TestLengthOfLongestSubstring(t *testing.T) {
 	lengthOfLongestSubstring("abcabcd")
 }
+
+func TestContainsNearbyDuplicate(t *testing.T) {
+	containsNearbyDuplicate([]int{1, 2, 3, 1, 2, 3}, 2)
+}
