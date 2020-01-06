@@ -3,20 +3,17 @@ package math
 // 埃拉托斯特尼筛法
 
 func countPrimes(n int) int {
-	nums := make([]int, n)
-	for i := 0; i < n; i++ {
-		nums[i] = 1
-	}
+	nums := make([]bool, n)
 	for i := 2; i < n; i++ {
-		if nums[i] == 1 {
+		if nums[i] == false {
 			for j := 2; j*i < n; j++ {
-				nums[j*i] = 0
+				nums[j*i] = true
 			}
 		}
 	}
 	count := 0
 	for i := 2; i < n; i++ {
-		if nums[i] == 1 {
+		if nums[i] == false {
 			count++
 		}
 	}
