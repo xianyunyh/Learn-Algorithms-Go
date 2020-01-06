@@ -25,3 +25,7 @@ func TestMyAtoi(t *testing.T) {
 	a := assert.New(t)
 	a.Equal(myAtoi("-91283472332"), -2147483648)
 }
+
+func TestCcountPrimes(t *testing.T) {
+	countPrimes(10)
+}
