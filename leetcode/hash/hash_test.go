@@ -59,3 +59,7 @@ func TestLengthOfLongestSubstring(t *testing.T) {
 func TestContainsNearbyDuplicate(t *testing.T) {
 	containsNearbyDuplicate([]int{1, 2, 3, 1, 2, 3}, 2)
 }
+
+func TestFirstUniqChar(t *testing.T) {
+	firstUniqChar("leetcode")
+}
