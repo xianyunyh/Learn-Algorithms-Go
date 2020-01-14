@@ -63,3 +63,8 @@ func TestContainsNearbyDuplicate(t *testing.T) {
 func TestFirstUniqChar(t *testing.T) {
 	firstUniqChar("leetcode")
 }
+
+func TestFindTheDifference(t *testing.T) {
+	s := findTheDifference("a", "aa")
+	log.Println(s)
+}
