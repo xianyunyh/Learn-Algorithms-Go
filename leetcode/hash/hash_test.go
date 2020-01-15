@@ -68,3 +68,8 @@ func TestFindTheDifference(t *testing.T) {
 	s := findTheDifference("a", "aa")
 	log.Println(s)
 }
+
+func TestHindex(t *testing.T) {
+	arr := []int{3, 0, 6, 1, 5}
+	hIndex(arr)
+}
