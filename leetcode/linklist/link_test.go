@@ -1,8 +1,9 @@
 package linklist
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAddTwoNumbers(t *testing.T) {
@@ -36,4 +37,8 @@ func TestMergeTwoLists(t *testing.T) {
 	l4.Next.Next.Next = &ListNode{Val: 4}
 	l4.Next.Next.Next.Next = &ListNode{Val: 5}
 	removeNthFromEnd(l4, 2)
+}
+
+func TestLru(t *testing.T) {
+
 }
