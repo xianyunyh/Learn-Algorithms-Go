@@ -1,5 +1,7 @@
 package linklist
 
+//解题思路 ： 遍历两个链表，让两个链表的值相加。让商=carry 下一次的计算结果 加上carray，
+// 如果已经结束，carray 还存在，说明进位了。补1
 func addTwoNumbers(l1, l2 *ListNode) *ListNode {
 	pre := &ListNode{}
 	current := pre
