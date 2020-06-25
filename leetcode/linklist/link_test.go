@@ -61,3 +61,23 @@ func TestRemoveDuplicateNodes(t *testing.T) {
 	head.Next.Next.Next.Next.Next = &ListNode{Val: 1}
 	removeDuplicateNodes(head)
 }
+
+func TestMyLinkList(t *testing.T) {
+	// ["MyLinkedList","addAtHead","addAtTail","addAtIndex","get","deleteAtIndex","get"]
+	// [[],[1],[3],[1,2],[1],[1],[1]]
+	obj := Constructor2()
+	obj.AddAtHead(2)
+	obj.DeleteAtIndex(1)
+	obj.AddAtHead(2)
+	obj.AddAtHead(7)
+	obj.AddAtHead(3)
+	obj.AddAtHead(2)
+	obj.AddAtHead(5)
+	obj.AddAtTail(5)
+	obj.Get(5)
+	obj.DeleteAtIndex(6)
+	obj.DeleteAtIndex(4)
+	param_1 := obj.Get(1)
+	obj.DeleteAtIndex(1)
+	t.Log(param_1)
+}
