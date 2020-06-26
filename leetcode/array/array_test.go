@@ -74,3 +74,7 @@ func TestIsPalindrome(t *testing.T) {
 	a.Equal(isPalindrome(-10), false)
 	log.Println(r)
 }
+
+func TestWordBreak(t *testing.T) {
+	wordBreak("aaaaaaa", []string{"aaaa", "aaa"})
+}
