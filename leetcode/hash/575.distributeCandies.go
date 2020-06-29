@@ -1,4 +1,4 @@
-package linklist
+package hash
 
 func distributeCandies(candies []int) int {
 	counts := len(candies)

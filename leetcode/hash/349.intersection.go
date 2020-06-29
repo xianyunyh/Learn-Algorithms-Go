@@ -20,7 +20,7 @@ func intersection(nums1 []int, nums2 []int) []int {
 	}
 	var reuslt []int
 
-	for k, _ := range table2 {
+	for k := range table2 {
 		reuslt = append(reuslt, k)
 	}
 	return reuslt
