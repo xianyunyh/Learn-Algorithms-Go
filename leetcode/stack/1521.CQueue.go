@@ -21,20 +21,20 @@ func (this *CQueue) DeleteHead() int {
 		return -1
 	}
 	res := -1
-	if len(this.right) != 0 {
-		res = this.right[0]
-		if len(this.right) == 1 {
-			this.right = []int{}
-		} else {
-			this.right = this.right[1:]
-		}
+	// 右边有数据 从右边出
+	if len(this.right) > 0 {
+		res = this.right[len(this.right)-1]
+		this.right = this.right[:len(this.right)-1]
 		return res
 	}
-
-	for i := len(this.left) - 1; i > 1; i-- {
+	if len(this.left) == 0 {
+		return -1
+	}
+	for i := len(this.left) - 1; i >= 0; i-- {
 		this.right = append(this.right, this.left[i])
 	}
-	res = this.left[0]
 	this.left = []int{}
+	res = this.right[len(this.right)-1]
+	this.right = this.right[:len(this.right)-1]
 	return res
 }
