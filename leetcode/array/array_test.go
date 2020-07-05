@@ -78,3 +78,7 @@ func TestIsPalindrome(t *testing.T) {
 func TestWordBreak(t *testing.T) {
 	wordBreak("aaaaaaa", []string{"aaaa", "aaa"})
 }
+
+func TestCreateTargetArray(t *testing.T) {
+	CreateTargetArray([]int{0, 1, 2, 3, 4}, []int{0, 1, 2, 2, 1})
+}
