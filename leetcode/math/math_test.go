@@ -1,10 +1,11 @@
 package math
 
-import "testing"
+import (
+	"log"
+	"testing"
 
-import "github.com/stretchr/testify/assert"
-
-import "log"
+	"github.com/stretchr/testify/assert"
+)
 
 func TestReverse(t *testing.T) {
 	reverse(1534236469)
@@ -28,4 +29,8 @@ func TestMyAtoi(t *testing.T) {
 
 func TestCcountPrimes(t *testing.T) {
 	countPrimes(10)
+}
+
+func TestHammingWeight(t *testing.T) {
+	hammingWeight(00000000000000000000000000001011)
 }
