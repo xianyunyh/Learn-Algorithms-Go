@@ -34,3 +34,9 @@ func TestCcountPrimes(t *testing.T) {
 func TestHammingWeight(t *testing.T) {
 	hammingWeight(00000000000000000000000000001011)
 }
+
+func TestSingleNumber(t *testing.T) {
+	res := singleNumber([]int{1, 2, 1, 3, 1, 3, 3})
+	a := assert.New(t)
+	a.Equal(res, 2)
+}
