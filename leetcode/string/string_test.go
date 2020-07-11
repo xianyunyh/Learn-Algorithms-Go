@@ -7,6 +7,7 @@ import (
 )
 
 func TestLongestCommonPrefix(t *testing.T) {
+	toLowerCase("Hello")
 	strs := []string{"flower", "flow", "flight"}
 	s := longestCommonPrefix(strs)
 	log.Println(s)
