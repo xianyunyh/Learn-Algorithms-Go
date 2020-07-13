@@ -11,4 +11,9 @@ func fib(n int) int {
 	 return a
  }
 
- func 
+ func fib2 (n int) int {
+	 if n <= 1 {
+		 return n
+	 }
+	 return fib2(n -1) + fib(n-2)
+ }
