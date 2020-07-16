@@ -1,0 +1,148 @@
+run:
+  concurrency: 4
+  timeout: 10m
+  issues-exit-code: 1
+  tests: false
+  skip-dirs:
+    - tests
+    - vendor
+
+  skip-dirs-use-default: true
+  skip-files:
+    - ".*\\.my\\.go$"
+    - lib/bad.go
+    - "test.go"
+# output configuration options
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  errcheck:
+    check-type-assertions: false
+    check-blank: false
+    ignore: fmt:.*,io/ioutil:^Read.*
+
+  funlen:
+    lines: 60
+    statements: 40
+  gosec:
+    exclude:
+    - G401
+    - G101
+    - G501
+    - G107
+  govet:
+    check-shadowing: false
+    settings:
+      printf:
+        funcs:
+        - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+        - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+        - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+        - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+    enable:
+    - atomicalign
+    enable-all: false
+    disable:
+    - shadow
+    disable-all: false
+  golint:
+    min-confidence: 0.8
+  gofmt:
+    simplify: true
+  gocyclo:
+    min-complexity: 10
+  gocognit:
+    min-complexity: 10
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  depguard:
+    list-type: blacklist
+    include-go-root: false
+    packages:
+    - github.com/sirupsen/logrus
+    packages-with-error-messages:
+      github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
+  misspell:
+    locale: US
+    ignore-words:
+    - someword
+  lll:
+    line-length: 120
+    tab-width: 1
+  unused:
+    check-exported: false
+  unparam:
+    check-exported: false
+  nakedret:
+    max-func-lines: 30
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: false
+  gocritic:
+    disabled-checks:
+    - regexpMust
+    enabled-tags:
+    - performance
+
+    settings:
+      captLocal:
+        paramsOnly: true
+      rangeValCopy:
+        sizeThreshold: 32
+  godox:
+    keywords:
+    - NOTE
+    - OPTIMIZE
+    - HACK
+  dogsled:
+
+    max-blank-identifiers: 2
+
+  whitespace:
+    multi-if: false
+    multi-func: false
+  wsl:
+    strict-append: true
+    allow-assign-and-call: true
+    allow-multiline-assign: true
+    allow-cuddle-declarations: false
+    allow-trailing-comment: false
+    force-case-trailing-whitespace: 0
+
+linters:
+  enable:
+  - megacheck
+  - govet
+  - goimports
+  disable:
+  - maligned
+  - prealloc
+
+#  disable-all: false
+  presets:
+  - bugs
+  - unused
+  fast: true
+
+issues:
+  exclude:
+    - G401
+    - G101
+    - G501
+    - G107
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec

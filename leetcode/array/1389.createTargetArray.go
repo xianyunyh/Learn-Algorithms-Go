@@ -1,6 +1,6 @@
 package array
 
-func CreateTargetArray(nums []int, index []int) []int {
+func createTargetArray(nums []int, index []int) []int {
 	result := []int{}
 	for k, v := range nums {
 		i := index[k]

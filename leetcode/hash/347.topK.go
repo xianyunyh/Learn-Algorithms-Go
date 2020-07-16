@@ -1,6 +1,8 @@
 package hash
 
-import "container/heap"
+import (
+	"container/heap"
+)
 
 // @lc code=start
 //实现堆

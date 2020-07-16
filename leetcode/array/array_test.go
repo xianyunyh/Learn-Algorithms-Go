@@ -80,5 +80,5 @@ func TestWordBreak(t *testing.T) {
 }
 
 func TestCreateTargetArray(t *testing.T) {
-	CreateTargetArray([]int{0, 1, 2, 3, 4}, []int{0, 1, 2, 2, 1})
+	createTargetArray([]int{0, 1, 2, 3, 4}, []int{0, 1, 2, 2, 1})
 }

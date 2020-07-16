@@ -11,7 +11,7 @@ func firstUniqChar(s string) int {
 		if _, ok := table[v]; !ok {
 			table[v] = 1
 		} else {
-			table[v] += 1
+			table[v]++
 		}
 	}
 

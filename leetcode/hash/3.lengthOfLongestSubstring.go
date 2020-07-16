@@ -1,6 +1,8 @@
 package hash
 
-import "math"
+import (
+	"math"
+)
 
 func lengthOfLongestSubstring(str string) int {
 	l := len(str)

@@ -1,6 +1,6 @@
 package array
 
-func twoSum(numbers []int, target int) []int {
+func twoSum2(numbers []int, target int) []int {
 
 	max := len(numbers) - 1
 	min := 0

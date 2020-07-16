@@ -5,7 +5,7 @@ func numIdenticalPairs(nums []int) int {
 	for i := 0; i < len(nums); i++ {
 		for j := 1 + i; j < len(nums); j++ {
 			if nums[i] == nums[j] && i < j {
-				n += 1
+				n++
 			}
 		}
 	}

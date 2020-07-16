@@ -5,7 +5,7 @@ func intersect(nums1 []int, nums2 []int) []int {
 	table := make(map[int]int)
 	for _, v := range nums1 {
 		if _, ok := table[v]; ok {
-			table[v] += 1
+			table[v]++
 		} else {
 			table[v] = 1
 		}

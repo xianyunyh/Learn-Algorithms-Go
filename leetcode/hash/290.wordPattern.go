@@ -1,6 +1,8 @@
 package hash
 
-import "strings"
+import (
+	"strings"
+)
 
 func wordPattern(pattern string, str string) bool {
 	strs := strings.Split(str, " ")

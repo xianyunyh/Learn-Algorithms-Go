@@ -30,17 +30,17 @@ func isValidSudoku(board [][]byte) bool {
 				// 计算box所在的索引
 				boxIdx := (i/3)*3 + j/3
 				if _, ok := row[i][num]; ok {
-					row[i][num] += 1
+					row[i][num]++
 				} else {
 					row[i][num] = 1
 				}
 				if _, ok := column[j][num]; ok {
-					column[j][num] += 1
+					column[j][num]++
 				} else {
 					column[j][num] = 1
 				}
 				if _, ok := box[boxIdx][num]; ok {
-					box[boxIdx][num] += 1
+					box[boxIdx][num]++
 				} else {
 					box[boxIdx][num] = 1
 				}

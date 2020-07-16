@@ -1,6 +1,8 @@
 package hash
 
-import "sort"
+import (
+	"sort"
+)
 
 func hIndex(citations []int) int {
 	sort.Ints(citations)
