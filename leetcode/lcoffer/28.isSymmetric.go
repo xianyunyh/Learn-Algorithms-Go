@@ -1,7 +1,5 @@
 package lcoffer
 
-import . "github.com/xianyunyh/Learn-Algorithms-Go/leetcode/tree"
-
 /**
  * Definition for a binary tree node.
  * type TreeNode struct {

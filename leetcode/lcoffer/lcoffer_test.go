@@ -8,3 +8,8 @@ func TestSpiralOrder(t *testing.T) {
 		{4, 0, -1},
 	})
 }
+
+func TestSlice(t *testing.T) {
+	str := "hello world"
+	t.Log(str[6:12])
+}

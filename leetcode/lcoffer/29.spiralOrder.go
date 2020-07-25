@@ -4,7 +4,6 @@ func spiralOrder(matrix [][]int) []int {
 	if len(matrix) == 0 {
 		return []int{}
 	}
-
 	top := 0
 	bottom := len(matrix) - 1
 	left := 0
