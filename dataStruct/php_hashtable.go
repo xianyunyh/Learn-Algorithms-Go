@@ -9,7 +9,7 @@ type PHPHashTable struct {
 	numUsed     uint32
 	numElements uint32
 	tableSize   uint32
-	arData      *Buckets
+	arData      *arData
 }
 
 //
@@ -19,7 +19,7 @@ type PHPBucket struct {
 	next    *PHPBucket
 	flag    uint8 // flag=1 被删除
 }
-type Buckets struct {
+type arData struct {
 	indexs []int
 	items  []*PHPBucket
 }
@@ -37,7 +37,7 @@ func NewPHPHashTable() *PHPHashTable {
 		numUsed:     0, //使用的个数 包含被删除的
 		numElements: 0, //真实的个数
 		tableSize:   8, //总数
-		arData: &Buckets{
+		arData: &arData{
 			indexs: idx,
 			items:  items,
 		},
