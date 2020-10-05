@@ -1,5 +1,6 @@
 package array
 
+// 寻找中心索引， 2*T + nums[i] = Sum
 func pivotIndex(nums []int) int {
 	if len(nums) == 0 {
 		return -1
